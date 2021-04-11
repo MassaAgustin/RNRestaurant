@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 
 import { View, Text, ScrollView, FlatList } from 'react-native'
@@ -6,28 +6,33 @@ import { Card, Icon } from 'react-native-elements'
 
 import { baseUrl } from '../shared/baseUrl'
 
+import { postFavorites } from '../redux/ActionCreators'
+
 const mapStateToProps = state => {
     return {
         dishes: state.dishes,
-        comments: state.comments
+        comments: state.comments,
+        favorites: state.favorites
     }
 }
 
+const mapDispatchToProps = dispatch => ({
+    postFavorites: (dishId) => dispatch(postFavorites(dishId))
+})
+
 const DishDetail = (props) => {
 
-    const [favorites, setFavorites] = useState([])
-
     const { dishId } = props.route.params
-
+    const { dishes, favorites, postFavorites} = props
 
     const markFavorite = () => {
-        setFavorites(favorites.concat(dishId))
+        postFavorites(dishId)
     }
 
     const DishRender = () => {
 
-        const dish = props.dishes.dishes[+dishId];
-        const imageURL = `${baseUrl}images/uthappizza.png`
+        const dish = dishes.dishes[+dishId];
+        const imageURL = `${baseUrl}${dish.image}`
 
         const favorite = favorites.some(el => el === dishId)
 
@@ -91,4 +96,4 @@ const DishDetail = (props) => {
     )
 }
 
-export default connect(mapStateToProps)(DishDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(DishDetail);

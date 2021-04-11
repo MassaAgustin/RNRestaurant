@@ -1,7 +1,7 @@
 import * as ActionTypes from './ActionTypes'
 
 export const promotions = (state = {
-    isLoading: false,
+    isLoading: true,
     errMessage: null,
     promotions: []
 }, action) => {

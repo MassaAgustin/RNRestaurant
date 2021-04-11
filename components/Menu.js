@@ -6,6 +6,8 @@ import { Tile } from 'react-native-elements'
 
 import { baseUrl } from '../shared/baseUrl'
 
+import { Loading } from './Loading'
+
 const mapStateToProps = state => {
     return {
         dishes: state.dishes
@@ -15,6 +17,8 @@ const mapStateToProps = state => {
 const Menu = (props) => {
 
     const { navigate } = props.navigation
+
+    const { isLoading, errMess, dishes } = props.dishes
 
     const renderMenuItem = ({ item, index }) => {
 
@@ -32,13 +36,28 @@ const Menu = (props) => {
         )
     }
 
-    return (
-        <FlatList
-            data={props.dishes.dishes}
-            renderItem={renderMenuItem}
-            keyExtractor={item => item.id.toString()}
-        />
-    )
+    if (isLoading) {
+        return (
+            <Loading />
+        )
+    } else {
+        if (errMess) {
+            return (
+                <View>
+                    <Text>{errMess}</Text>
+                </View>
+            )
+        } else {
+            return (
+                <FlatList
+                    data={dishes}
+                    renderItem={renderMenuItem}
+                    keyExtractor={item => item.id.toString()}
+                />
+            )
+        }
+    }
+
 }
 
-export default connect(mapStateToProps)(Menu);
+    export default connect(mapStateToProps)(Menu);

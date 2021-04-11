@@ -1,10 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { ScrollView, View, Text } from 'react-native'
+import { ScrollView, Text } from 'react-native'
 import { Card } from 'react-native-elements'
 
 import { baseUrl } from '../shared/baseUrl'
+
+import { Loading } from './Loading'
 
 const mapStateToProps = state => {
 
@@ -16,38 +18,51 @@ const mapStateToProps = state => {
 }
 
 function RenderItem(props) {
-    const item = props.item
 
-    const imageURL = `${baseUrl}images/uthappizza.png`
 
-    if (item != null) {
+    const { item, isLoading, errMess } = props
+
+    if (isLoading) {
         return (
             <Card>
-                <Card.FeaturedTitle>{item.name}</Card.FeaturedTitle>
-                <Card.FeaturedSubtitle>{item.designation}</Card.FeaturedSubtitle>
-                <Card.Image source={{ uri: imageURL }} />
-                <Text style={{ margin: 10 }}>{item.description}</Text>
+                <Loading />
             </Card>
         )
     } else {
-        return (View)
+        if (errMess) {
+            return (
+                <Card>
+                    <Text>{errMess}</Text>
+                </Card>
+            )
+        } else {
+            return (
+                <Card>
+                    <Card.Image source={{ uri: baseUrl + item.image }} style={{alignItems: 'center', justifyContent: 'center'}}>
+                        <Card.FeaturedTitle >{item.name}</Card.FeaturedTitle>
+                        <Card.FeaturedSubtitle >{item.designation}</Card.FeaturedSubtitle>
+                    </Card.Image>
+                    <Text style={{ margin: 10 }}>{item.description}</Text>
+                </Card>
+            )
+        }
     }
 }
 
 const Home = (props) => {
 
-    const { dishes } = props.dishes
-    const { promotions } = props.promotions
-    const { leaders } = props.leaders
+    const { dishes, promotions, leaders } = props
+
+    const itemDish = dishes.dishes.filter((dish) => dish.featured)
+    const itemPromo = promotions.promotions.filter((promotion) => promotion.featured)
+    const itemLeader = leaders.leaders.filter((leader) => leader.featured)
 
     return (
-
         <ScrollView>
-            <RenderItem item={dishes.filter((dish) => dish.featured)} />
-            <RenderItem item={promotions.filter((promo) => promo.featured)} />
-            <RenderItem item={leaders.filter((leader) => leader.featured)} />
+            <RenderItem item={itemDish[0]} isLoading={dishes.isLoading} errMess={dishes.errMess} />
+            <RenderItem item={itemPromo[0]} isLoading={promotions.isLoading} errMess={promotions.errMess} />
+            <RenderItem item={itemLeader[0]} isLoading={leaders.isLoading} errMess={leaders.errMess} />
         </ScrollView>
-
     )
 }
 

@@ -5,6 +5,7 @@ import { Text, FlatList, ScrollView } from 'react-native'
 import { Card, ListItem, Avatar } from 'react-native-elements'
 
 import { ASSIGNMENT } from '../shared/assignment'
+import { Loading } from './Loading'
 
 import { baseUrl } from '../shared/baseUrl'
 
@@ -18,7 +19,7 @@ const About = (props) => {
 
     const historys = ASSIGNMENT[1].text
 
-    const { leaders } = props.leaders
+    const { leaders, isLoading, errMessage } = props.leaders
 
     const History = () => {
         return (
@@ -37,11 +38,9 @@ const About = (props) => {
         //I cant use item.image, if i did have an error 'invalid call in line 31'
         const avatarAlberto = `${baseUrl}${item.image}`
 
-        console.log(avatarAlberto)
-
         return (
-            <ListItem key={`itemAbout-${index}`}>
-                <Avatar source={{ uri: avatarAlberto }} rounded/>
+            <ListItem key={`itemAbout-${index}`} >
+                <Avatar source={{ uri: avatarAlberto }} rounded />
                 <ListItem.Content>
                     <ListItem.Title>{item.name}</ListItem.Title>
                     <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
@@ -50,20 +49,44 @@ const About = (props) => {
         )
     }
 
-    return (
-        <ScrollView>
-            <History />
-            <Card containerStyle={{flex: 1, marginBottom: 5 }} wrapperStyle={{ flex: 1, marginBottom: 5 }}>
-                <Card.Title>Corporate Leadership</Card.Title>
-                <Card.Divider />
-                <FlatList
-                    data={leaders}
-                    renderItem={renderLeaderItem}
-                    keyExtractor={item => item.id.toString()}
-                />
-            </Card>
-        </ScrollView>
-    )
+    if (isLoading) {
+        return (
+            <ScrollView>
+                <History />
+                <Card containerStyle={{ flex: 1, marginBottom: 5 }} wrapperStyle={{ flex: 1, marginBottom: 5 }}>
+                    <Card.Title>Corporate Leadership</Card.Title>
+                    <Loading />
+                </Card>
+            </ScrollView>
+        )
+    } else {
+        if (errMessage) {
+            return (
+                <ScrollView>
+                    <History />
+                    <Card containerStyle={{ flex: 1, marginBottom: 5 }} wrapperStyle={{ flex: 1, marginBottom: 5 }}>
+                        <Card.Title>Corporate Leadership</Card.Title>
+                        <Text>{errMessage}</Text>
+                    </Card>
+                </ScrollView>
+            )
+        } else {
+            return (
+                <ScrollView >
+                    <History />
+                    <Card containerStyle={{ flex: 1, marginBottom: 5 }} wrapperStyle={{ flex: 1, marginBottom: 5 }}>
+                        <Card.Title>Corporate Leadership</Card.Title>
+                        <Card.Divider />
+                        <FlatList
+                            data={leaders}
+                            renderItem={renderLeaderItem}
+                            keyExtractor={item => item.id.toString()}
+                        />
+                    </Card>
+                </ScrollView>
+            )
+        }
+    }
 }
 
 export default connect(mapStateToProps)(About)
