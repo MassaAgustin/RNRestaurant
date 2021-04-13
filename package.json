@@ -9,6 +9,7 @@
     "server": "json-server --watch ../json-server/db.json --host 192.168.0.232 --port 3004 --delay 2000"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.15.2",
     "@react-native-community/datetimepicker": "3.0.4",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-picker/picker": "^1.14.0",

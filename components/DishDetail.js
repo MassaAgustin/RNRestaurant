@@ -70,6 +70,12 @@ const DishDetail = (props) => {
             return false
         }
 
+        const recognizeComment = ({ moveX, moveY, dx, dy }) => {
+            if (dx > 200) //left to right
+                return true
+            return false
+        }
+
         const panResponder = PanResponder.create({
             onStartShouldSetPanResponder: (e, gestureState) => {
                 return true
@@ -89,6 +95,8 @@ const DishDetail = (props) => {
                         ],
                         { cancelable: false }
                     )
+                if (recognizeComment(gestureState))
+                    toggleModal()
                 return true
             }
         })

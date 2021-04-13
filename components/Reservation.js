@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, Switch, ScrollView, Modal, Platform } from 'react-native'
+import { StyleSheet, Text, View, Switch, ScrollView, Modal, Platform, Alert } from 'react-native'
 
 import { RNDateTimePicker } from './RNDateTimePicker'
 
 import { Picker } from '@react-native-picker/picker'
+
+import * as Animatable from 'react-native-animatable'
 
 import { Button } from './Button'
 
@@ -30,7 +32,18 @@ export const Reservation = () => {
     };
 
     const handleSubmitReserve = (event) => {
-        toggleModal()
+        Alert.alert(
+            'Your Reservation OK?',
+            `Number of Guest: ${guest}\n
+            Smoking? ${smoking ? 'Yes' : 'No'}\n
+            Date: ${date.toLocaleDateString()} \n
+            Time: ${date.toLocaleTimeString()}`,
+            [
+                { text: 'Cancel', style: 'cancel'},
+                { text: 'Ok', onPress: () => toggleModal()}
+            ],
+            { cancelable: false }
+        )
     }
 
     const toggleModal = () => {
@@ -46,72 +59,74 @@ export const Reservation = () => {
 
     return (
         <ScrollView>
-            <View style={styles.formRow}>
-                <Text style={styles.formLabel}>Number of Guest</Text>
-                <Picker
-                    style={styles.formItem}
-                    selectedValue={guest}
-                    onValueChange={handleChangePickerGuest}
-                >
-                    <Picker.Item label="1" value="1" />
-                    <Picker.Item label="2" value="2" />
-                    <Picker.Item label="3" value="3" />
-                    <Picker.Item label="4" value="4" />
-                    <Picker.Item label="5" value="5" />
-                    <Picker.Item label="6" value="6" />
-                </Picker>
-            </View>
-            <View style={styles.formRow}>
-                <Text style={styles.formLabel}>Smoking / Non-Smoking?</Text>
-                <Switch
-                    style={styles.formItem}
-                    value={smoking}
-                    trackColor={{ false: '#3D1C5C', true: '#7843A8' }}
-                    thumbColor={smoking ? '#fff' : '#7843a8'}
-                    onValueChange={handleChangeSwitchSmoking}
-                />
-            </View>
-            <View style={styles.formRow}>
-                <RNDateTimePicker
-                    date={date}
-                    onChange={handleChangeDatePicker}
-                    textLabel={'Date and time'}
-                    show={showDatePicker}
-                    setShow={setShowDatePicker}
-                />
-            </View>
-            <View style={styles.formRow}>
-                <View style={{ width: '90%' }}>
-                    <Button
-                        textButton="Reserve"
-                        onPress={handleSubmitReserve}
-                        color='#7843A8'
-                        fontSize={22}
+            <Animatable.View animation="zoomIn" duration={2000} delay={1000}>
+                <View style={styles.formRow}>
+                    <Text style={styles.formLabel}>Number of Guest</Text>
+                    <Picker
+                        style={styles.formItem}
+                        selectedValue={guest}
+                        onValueChange={handleChangePickerGuest}
+                    >
+                        <Picker.Item label="1" value="1" />
+                        <Picker.Item label="2" value="2" />
+                        <Picker.Item label="3" value="3" />
+                        <Picker.Item label="4" value="4" />
+                        <Picker.Item label="5" value="5" />
+                        <Picker.Item label="6" value="6" />
+                    </Picker>
+                </View>
+                <View style={styles.formRow}>
+                    <Text style={styles.formLabel}>Smoking / Non-Smoking?</Text>
+                    <Switch
+                        style={styles.formItem}
+                        value={smoking}
+                        trackColor={{ false: '#3D1C5C', true: '#7843A8' }}
+                        thumbColor={smoking ? '#fff' : '#7843a8'}
+                        onValueChange={handleChangeSwitchSmoking}
                     />
                 </View>
-            </View>
-            <Modal
-                animationType='slide'
-                transparent={false}
-                visible={showModal}
-                onDismiss={toggleModal}
-                onRequestClose={toggleModal}
-            >
-                <View style={styles.modal}>
-                    <Text style={styles.modalTitle}>Your reservation</Text>
-                    <Text style={styles.modalText}>Number of Guest: {guest}</Text>
-                    <Text style={styles.modalText}>Smoking? : {smoking ? 'Yes' : 'No'}</Text>
-                    <Text style={styles.modalText}>Date: {date.toLocaleDateString()}</Text>
-                    <Text style={styles.modalText}>Time: {date.toLocaleTimeString()}</Text>
-                    <View style={{ margin: 10 }}>
+                <View style={styles.formRow}>
+                    <RNDateTimePicker
+                        date={date}
+                        onChange={handleChangeDatePicker}
+                        textLabel={'Date and time'}
+                        show={showDatePicker}
+                        setShow={setShowDatePicker}
+                    />
+                </View>
+                <View style={styles.formRow}>
+                    <View style={{ width: '90%' }}>
                         <Button
-                            onPress={resetForm}
-                            textButton='Close'
+                            textButton="Reserve"
+                            onPress={handleSubmitReserve}
                             color='#7843A8'
+                            fontSize={22}
                         />
                     </View>
                 </View>
-            </Modal>
+                <Modal
+                    animationType='slide'
+                    transparent={false}
+                    visible={showModal}
+                    onDismiss={toggleModal}
+                    onRequestClose={toggleModal}
+                >
+                    <View style={styles.modal}>
+                        <Text style={styles.modalTitle}>Your reservation</Text>
+                        <Text style={styles.modalText}>Number of Guest: {guest}</Text>
+                        <Text style={styles.modalText}>Smoking? : {smoking ? 'Yes' : 'No'}</Text>
+                        <Text style={styles.modalText}>Date: {date.toLocaleDateString()}</Text>
+                        <Text style={styles.modalText}>Time: {date.toLocaleTimeString()}</Text>
+                        <View style={{ margin: 10 }}>
+                            <Button
+                                onPress={resetForm}
+                                textButton='Close'
+                                color='#7843A8'
+                            />
+                        </View>
+                    </View>
+                </Modal>
+            </Animatable.View>
         </ScrollView>
     )
 }
