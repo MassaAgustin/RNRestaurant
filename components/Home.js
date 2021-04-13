@@ -1,12 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { ScrollView, Text } from 'react-native'
-import { Card } from 'react-native-elements'
+import { View, I18nManager } from 'react-native'
 
-import { baseUrl } from '../shared/baseUrl'
-
-import { Loading } from './Loading'
+import { RenderItem } from './RenderItem'
 
 const mapStateToProps = state => {
 
@@ -14,38 +11,6 @@ const mapStateToProps = state => {
         dishes: state.dishes,
         promotions: state.promotions,
         leaders: state.leaders
-    }
-}
-
-function RenderItem(props) {
-
-
-    const { item, isLoading, errMess } = props
-
-    if (isLoading) {
-        return (
-            <Card>
-                <Loading />
-            </Card>
-        )
-    } else {
-        if (errMess) {
-            return (
-                <Card>
-                    <Text>{errMess}</Text>
-                </Card>
-            )
-        } else {
-            return (
-                <Card>
-                    <Card.Image source={{ uri: baseUrl + item.image }} style={{alignItems: 'center', justifyContent: 'center'}}>
-                        <Card.FeaturedTitle >{item.name}</Card.FeaturedTitle>
-                        <Card.FeaturedSubtitle >{item.designation}</Card.FeaturedSubtitle>
-                    </Card.Image>
-                    <Text style={{ margin: 10 }}>{item.description}</Text>
-                </Card>
-            )
-        }
     }
 }
 
@@ -58,11 +23,11 @@ const Home = (props) => {
     const itemLeader = leaders.leaders.filter((leader) => leader.featured)
 
     return (
-        <ScrollView>
-            <RenderItem item={itemDish[0]} isLoading={dishes.isLoading} errMess={dishes.errMess} />
-            <RenderItem item={itemPromo[0]} isLoading={promotions.isLoading} errMess={promotions.errMess} />
-            <RenderItem item={itemLeader[0]} isLoading={leaders.isLoading} errMess={leaders.errMess} />
-        </ScrollView>
+        <View style={{ flex: 1, flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row', justifyContent: 'center' }}>
+            <RenderItem item={itemDish[0]} isLoading={dishes.isLoading} errMess={dishes.errMess} pos={1} />
+            <RenderItem item={itemPromo[0]} isLoading={promotions.isLoading} errMess={promotions.errMess} pos={2} />
+            <RenderItem item={itemLeader[0]} isLoading={leaders.isLoading} errMess={leaders.errMess} pos={3} />
+        </View>
     )
 }
 

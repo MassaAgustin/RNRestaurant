@@ -16,6 +16,9 @@ import DishDetail from './DishDetail';
 import { Contact } from './Contact'
 import About from './About'
 
+import { Reservation } from './Reservation'
+import Favorites from './Favorites'
+
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
@@ -37,6 +40,10 @@ const HomeNav = createStackNavigator()
 const AboutNav = createStackNavigator()
 
 const ContactNav = createStackNavigator()
+
+const ReservationNav = createStackNavigator()
+
+const FavoriteNav = createStackNavigator()
 
 const Drawer = createDrawerNavigator()
 
@@ -65,43 +72,81 @@ const MainNavigator = () => {
     return (
         <Drawer.Navigator initialRouteName="Home" drawerContent={(props) => <CustomDrawerContentComponent {...props} />} >
             <Drawer.Screen name="Home" component={HomeNavigator} options={({ navigation }) => ({
-                drawerIcon: ({ color }) => (
+                drawerIcon: ({ focused }) => (
                     <Icon
                         name='home'
                         type='font-awesome'
                         size={24}
-                        color={color}
+                        color={focused ? '#7843A8' : '#000'}
                     />
+                ),
+                drawerLabel: ({ focused, color }) => (
+                    <Text style={{ color: focused ? '#7843A8' : '#000' }}>Home</Text>
                 )
             })} />
             <Drawer.Screen name="About us" component={AboutNavigator} options={({ navigation }) => ({
-                drawerIcon: ({ color }) => (
+                drawerIcon: ({ focused }) => (
                     <Icon
                         name='info-circle'
                         type='font-awesome'
                         size={24}
-                        color={color}
+                        color={focused ? '#7843A8' : '#000'}
                     />
+                ),
+                drawerLabel: ({ focused }) => (
+                    <Text style={{ color: focused ? '#7843A8' : '#000' }}>About us</Text>
                 )
             })} />
             <Drawer.Screen name="Menu" component={MenuNavigator} options={({ navigation }) => ({
-                drawerIcon: ({ color }) => (
+                drawerIcon: ({ focused }) => (
                     <Icon
                         name='list'
                         type='font-awesome'
                         size={24}
-                        color={color}
+                        color={focused ? '#7843A8' : '#000'}
                     />
+                ),
+                drawerLabel: ({ focused }) => (
+                    <Text style={{ color: focused ? '#7843A8' : '#000' }}>Menu</Text>
                 )
             })} />
             <Drawer.Screen name="Contact us" component={ContactNavigator} options={({ navigation }) => ({
-                drawerIcon: ({ color }) => (
+                drawerIcon: ({ focused }) => (
                     <Icon
                         name='address-card'
                         type='font-awesome'
                         size={22}
-                        color={color}
+                        color={focused ? '#7843A8' : '#000'}
                     />
+                ),
+                drawerLabel: ({ focused }) => (
+                    <Text style={{ color: focused ? '#7843A8' : '#000' }}>Contact us</Text>
+                )
+            })} />
+            <Drawer.Screen name="Reservation" component={ReservationNavigator} options={({ navigation }) => ({
+                drawerIcon: ({ focused }) => (
+                    <Icon
+                        name='cutlery'
+                        type='font-awesome'
+                        size={24}
+                        color={focused ? '#7843A8' : '#000'}
+                    />
+                ),
+                drawerLabel: ({ focused }) => (
+                    <Text style={{ color: focused ? '#7843A8' : '#000' }}>Reservation</Text>
+                )
+            })} />
+            <Drawer.Screen name="Favorites" component={FavoritesNavigator} options={({ navigation }) => ({
+                drawerIcon: ({ focused }) => (
+                    <Icon
+                        name='heart'
+                        type='font-awesome'
+                        size={24}
+                        color={focused ? '#7843A8' : '#000'}
+                    />
+                ),
+                drawerLabel: ({ focused }) => (
+                    <Text style={{ color: focused ? '#7843A8' : '#000' }}>Favorites</Text>
                 )
             })} />
         </Drawer.Navigator>
@@ -116,10 +161,12 @@ const HomeNavigator = () => {
                 <Icon
                     name="menu"
                     size={24}
-                    color='black'
+                    color='white'
                     iconStyle={{ marginLeft: 15 }}
                     onPress={() => navigation.toggleDrawer()}
-                />)
+                />),
+            headerStyle: { backgroundColor: '#7843A8' },
+            headerTintColor: '#fff'
         })}
         >
             <MenuNav.Screen name="Home" component={Home} />
@@ -135,14 +182,26 @@ const MenuNavigator = () => {
                 <Icon
                     name="menu"
                     size={24}
-                    color='black'
+                    color='white'
                     iconStyle={{ marginLeft: 15 }}
                     onPress={() => navigation.toggleDrawer()}
-                />)
+                />),
+            headerStyle: { backgroundColor: '#7843A8' },
+            headerTintColor: '#fff'
         })}
         >
             <MenuNav.Screen name="Menu" component={Menu} />
-            <MenuNav.Screen name="DishDetail" component={DishDetail} />
+            <MenuNav.Screen name="DishDetail" component={DishDetail} options={({ navigation }) => ({
+                headerLeft: ({}) => (<Icon
+                    name="arrow-left"
+                    type='font-awesome'
+                    size={22}
+                    color='white'
+                    iconStyle={{ marginLeft: 15 }}
+                    onPress={() => navigation.goBack()}
+                />)
+            })}
+            />
         </MenuNav.Navigator >
     )
 }
@@ -155,10 +214,12 @@ const AboutNavigator = () => {
                 <Icon
                     name="menu"
                     size={24}
-                    color='black'
+                    color='white'
                     iconStyle={{ marginLeft: 15 }}
                     onPress={() => navigation.toggleDrawer()}
-                />)
+                />),
+            headerStyle: { backgroundColor: '#7843A8' },
+            headerTintColor: '#fff'
         })}
         >
             <MenuNav.Screen name="About us" component={About} />
@@ -174,14 +235,58 @@ const ContactNavigator = () => {
                 <Icon
                     name="menu"
                     size={24}
-                    color='black'
+                    color='white'
                     iconStyle={{ marginLeft: 15 }}
                     onPress={() => navigation.toggleDrawer()}
-                />)
+                />),
+            headerStyle: { backgroundColor: '#7843A8' },
+            headerTintColor: '#fff'
         })}
         >
             <MenuNav.Screen name="Contact us" component={Contact} />
         </ContactNav.Navigator>
+    )
+}
+
+const ReservationNavigator = () => {
+
+    return (
+        <ReservationNav.Navigator screenOptions={({ navigation }) => ({
+            headerLeft: ({ tintColor }) => (
+                <Icon
+                    name="menu"
+                    size={24}
+                    color='white'
+                    iconStyle={{ marginLeft: 15 }}
+                    onPress={() => navigation.toggleDrawer()}
+                />),
+            headerStyle: { backgroundColor: '#7843A8' },
+            headerTintColor: '#fff'
+        })}
+        >
+            <MenuNav.Screen name="Reservation" component={Reservation} />
+        </ReservationNav.Navigator>
+    )
+}
+
+const FavoritesNavigator = () => {
+
+    return (
+        <FavoriteNav.Navigator screenOptions={({ navigation }) => ({
+            headerLeft: ({ tintColor }) => (
+                <Icon
+                    name="menu"
+                    size={24}
+                    color='white'
+                    iconStyle={{ marginLeft: 15 }}
+                    onPress={() => navigation.toggleDrawer()}
+                />),
+            headerStyle: { backgroundColor: '#7843A8' },
+            headerTintColor: '#fff'
+        })}
+        >
+            <MenuNav.Screen name="Favorites" component={Favorites} />
+        </FavoriteNav.Navigator>
     )
 }
 

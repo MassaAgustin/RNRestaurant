@@ -1,15 +1,19 @@
-import React, { guest, smoking } from 'react'
-import { StyleSheet, Text, View, Switch, ScrollView } from 'react-native'
-import { Card } from 'react-native-elements'
+import React, { useState } from 'react'
+import { StyleSheet, Text, View, Switch, ScrollView, Modal, Platform } from 'react-native'
+
+import { RNDateTimePicker } from './RNDateTimePicker'
 
 import { Picker } from '@react-native-picker/picker'
-import DateTimePicker from '@react-native-community/datetimepicker';
+
+import { Button } from './Button'
 
 export const Reservation = () => {
 
     const [guest, setGuest] = useState(1)
     const [smoking, setSmoking] = useState(false)
-    const [state, setstate] = useState(initialState)
+    const [date, setDate] = useState(new Date())
+    const [showModal, setShowModal] = useState(false)
+    const [showDatePicker, setShowDatePicker] = useState(false)
 
     const handleChangePickerGuest = (itemValue, itemIndex) => {
         setGuest(itemValue)
@@ -17,6 +21,27 @@ export const Reservation = () => {
 
     const handleChangeSwitchSmoking = (value) => {
         setSmoking(value)
+    }
+
+    const handleChangeDatePicker = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShowDatePicker(Platform.OS === 'ios')
+        setDate(currentDate);
+    };
+
+    const handleSubmitReserve = (event) => {
+        toggleModal()
+    }
+
+    const toggleModal = () => {
+        setShowModal(!showModal)
+    }
+
+    const resetForm = () => {
+        setGuest(1)
+        setSmoking(false)
+        setDate(new Date())
+        setShowModal(false)
     }
 
     return (
@@ -41,10 +66,52 @@ export const Reservation = () => {
                 <Switch
                     style={styles.formItem}
                     value={smoking}
-                    trackColor={{ false: '#000', true: '#fff' }}
+                    trackColor={{ false: '#3D1C5C', true: '#7843A8' }}
+                    thumbColor={smoking ? '#fff' : '#7843a8'}
                     onValueChange={handleChangeSwitchSmoking}
                 />
             </View>
+            <View style={styles.formRow}>
+                <RNDateTimePicker
+                    date={date}
+                    onChange={handleChangeDatePicker}
+                    textLabel={'Date and time'}
+                    show={showDatePicker}
+                    setShow={setShowDatePicker}
+                />
+            </View>
+            <View style={styles.formRow}>
+                <View style={{ width: '90%' }}>
+                    <Button
+                        textButton="Reserve"
+                        onPress={handleSubmitReserve}
+                        color='#7843A8'
+                        fontSize={22}
+                    />
+                </View>
+            </View>
+            <Modal
+                animationType='slide'
+                transparent={false}
+                visible={showModal}
+                onDismiss={toggleModal}
+                onRequestClose={toggleModal}
+            >
+                <View style={styles.modal}>
+                    <Text style={styles.modalTitle}>Your reservation</Text>
+                    <Text style={styles.modalText}>Number of Guest: {guest}</Text>
+                    <Text style={styles.modalText}>Smoking? : {smoking ? 'Yes' : 'No'}</Text>
+                    <Text style={styles.modalText}>Date: {date.toLocaleDateString()}</Text>
+                    <Text style={styles.modalText}>Time: {date.toLocaleTimeString()}</Text>
+                    <View style={{ margin: 10 }}>
+                        <Button
+                            onPress={resetForm}
+                            textButton='Close'
+                            color='#7843A8'
+                        />
+                    </View>
+                </View>
+            </Modal>
         </ScrollView>
     )
 }
@@ -62,6 +129,24 @@ const styles = StyleSheet.create({
         flex: 2
     },
     formItem: {
-        flex: 1
+        flex: 2
+    },
+    modal: {
+        justifyContent: 'center',
+        margin: 20
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        backgroundColor: '#7843A8',
+        borderRadius: 25,
+        textAlign: 'center',
+        color: 'white',
+        marginBottom: 20,
+        padding: 7
+    },
+    modalText: {
+        fontSize: 18,
+        margin: 10
     }
 })

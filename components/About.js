@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import { Text, FlatList, ScrollView } from 'react-native'
 import { Card, ListItem, Avatar } from 'react-native-elements'
 
+import * as Animatable from 'react-native-animatable'
+
 import { ASSIGNMENT } from '../shared/assignment'
 import { Loading } from './Loading'
 
@@ -63,26 +65,30 @@ const About = (props) => {
         if (errMessage) {
             return (
                 <ScrollView>
-                    <History />
-                    <Card containerStyle={{ flex: 1, marginBottom: 5 }} wrapperStyle={{ flex: 1, marginBottom: 5 }}>
-                        <Card.Title>Corporate Leadership</Card.Title>
-                        <Text>{errMessage}</Text>
-                    </Card>
+                    <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+                        <History />
+                        <Card containerStyle={{ flex: 1, marginBottom: 5 }} wrapperStyle={{ flex: 1, marginBottom: 5 }}>
+                            <Card.Title>Corporate Leadership</Card.Title>
+                            <Text>{errMessage}</Text>
+                        </Card>
+                    </Animatable.View>
                 </ScrollView>
             )
         } else {
             return (
                 <ScrollView >
-                    <History />
-                    <Card containerStyle={{ flex: 1, marginBottom: 5 }} wrapperStyle={{ flex: 1, marginBottom: 5 }}>
-                        <Card.Title>Corporate Leadership</Card.Title>
-                        <Card.Divider />
-                        <FlatList
-                            data={leaders}
-                            renderItem={renderLeaderItem}
-                            keyExtractor={item => item.id.toString()}
-                        />
-                    </Card>
+                    <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+                        <History />
+                        <Card containerStyle={{ flex: 1, marginBottom: 5 }} wrapperStyle={{ flex: 1, marginBottom: 5 }}>
+                            <Card.Title>Corporate Leadership</Card.Title>
+                            <Card.Divider />
+                            <FlatList
+                                data={leaders}
+                                renderItem={renderLeaderItem}
+                                keyExtractor={item => item.id.toString()}
+                            />
+                        </Card>
+                    </Animatable.View>
                 </ScrollView>
             )
         }
