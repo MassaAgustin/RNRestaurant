@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux'
 
-import { View, Image, Text, StyleSheet } from 'react-native'
+import { View, Image, Text, StyleSheet, ToastAndroid } from 'react-native'
 import { Icon } from 'react-native-elements'
 
 import { createStackNavigator } from '@react-navigation/stack';
@@ -9,6 +9,8 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import NetInfo from '@react-native-community/netinfo';
 
 import Home from './Home'
 import Menu from './Menu';
@@ -335,6 +337,17 @@ const Main = (props) => {
         props.fetchComments()
         props.fetchPromos()
         props.fetchLeaders()
+
+        NetInfo.fetch()
+            .then(state => {
+                ToastAndroid.show(`Connection type: ${state.type}, Is connected? ${state.isConnected}`, ToastAndroid.LONG)
+            })
+        const unsubscribe = NetInfo.addEventListener(state => {
+            ToastAndroid.show(`Connection type: ${state.type}, Is connected? ${state.isConnected}`, ToastAndroid.LONG)
+        })
+
+        return () => unsubscribe()
+
     }, [])
 
     return (

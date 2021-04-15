@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { StyleSheet, View, ScrollView, Image } from 'react-native'
 import { Button, Input, CheckBox, Icon } from 'react-native-elements'
 
+
+import { Asset } from 'expo-asset';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
@@ -17,7 +20,7 @@ export const Register = () => {
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
     //const [remember, setRemember] = useState(false)
-    const [imageUrl, setImageUrl] = useState(baseUrl+'/images/logo.png')
+    const [imageUrl, setImageUrl] = useState(baseUrl + '/images/logo.png')
 
     const getImageFromCamera = async () => {
 
@@ -28,9 +31,35 @@ export const Register = () => {
                 aspect: [4, 3]
             })
             if (!capturedImage.cancelled) {
-                setImageUrl(capturedImage.uri)
+                await processImage(capturedImage.uri)
             }
         }
+    }
+
+    const getImageFromGallery = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (status === 'granted') {
+            let capturedImage = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [4, 3]
+            })
+            if (!capturedImage.cancelled) {
+                await processImage(capturedImage.uri)
+            }
+        }
+    }
+
+    const processImage = async (imageUri) => {
+        const processedImage = await ImageManipulator.manipulateAsync(
+            imageUri,
+            [
+                { resize: { width: 400 } }
+            ],
+            { format: 'png' }
+        )
+        console.log(processedImage)
+        setImageUrl(processedImage.uri)
     }
 
     const handleRegister = async () => {
@@ -52,33 +81,34 @@ export const Register = () => {
         <ScrollView>
             <View style={styles.container}>
                 <View style={styles.imageContainer} >
-                    <Input
-                        placeholder="First Name"
-                        leftIcon={{ type: 'font-awesome', name: 'user-o' }}
-                        onChangeText={(firstname) => setFirstName(firstname)}
-                        value={firstName}
-                        containerStyle={styles.formInput}
-                    />
                     <Button
                         title="Camera"
                         onPress={() => getImageFromCamera()}
-                    />
-                </View>
-                <View style={styles.imageContainer}>
-                    <Input
-                        placeholder="Last Name"
-                        leftIcon={{ type: 'font-awesome', name: 'user-o' }}
-                        onChangeText={(lastname) => setLastName(lastname)}
-                        value={lastName}
-                        containerStyle={styles.formInput}
                     />
                     <Image
                         loadingIndicatorSource={require('../assets/images/logo.png')}
                         source={{ uri: imageUrl }}
                         style={styles.image}
-                        onMagicTap={() => getImageFromCamera()}
+                    />
+                    <Button
+                        title="Gallery"
+                        onPress={() => getImageFromGallery()}
                     />
                 </View>
+                <Input
+                    placeholder="First Name"
+                    leftIcon={{ type: 'font-awesome', name: 'user-o' }}
+                    onChangeText={(firstname) => setFirstName(firstname)}
+                    value={firstName}
+                    containerStyle={styles.formInput}
+                />
+                <Input
+                    placeholder="Last Name"
+                    leftIcon={{ type: 'font-awesome', name: 'user-o' }}
+                    onChangeText={(lastname) => setLastName(lastname)}
+                    value={lastName}
+                    containerStyle={styles.formInput}
+                />
                 <Input
                     placeholder="Username"
                     leftIcon={{ type: 'font-awesome', name: 'user-o' }}
@@ -146,14 +176,12 @@ const styles = StyleSheet.create({
     imageContainer: {
         flex: 1,
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center'
     },
     image: {
         width: 80,
         height: 60,
-        marginBottom: 0,
-        borderColor: '#7843A8',
-        borderWidth: 5,
-        borderStyle: 'solid'
+        marginBottom: 0
     }
 })
