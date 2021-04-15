@@ -5,6 +5,9 @@ import { RNDateTimePicker } from './RNDateTimePicker'
 
 import { Picker } from '@react-native-picker/picker'
 
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
+
 import * as Animatable from 'react-native-animatable'
 
 import { Button } from './Button'
@@ -16,6 +19,38 @@ export const Reservation = () => {
     const [date, setDate] = useState(new Date())
     const [showModal, setShowModal] = useState(false)
     const [showDatePicker, setShowDatePicker] = useState(false)
+
+    const obtainNotificationPermission = async () => {
+
+        let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS)
+
+        if (permission.status !== 'granted') {
+            permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS)
+            if (permission.status !== 'granted')
+                Alert.alert("Permission no granted to show notifications")
+        }
+
+        return permission
+    }
+
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: false,
+            shouldSetBadge: false,
+        }),
+    });
+
+    const presentLocalNotification = async (date) => {
+        await obtainNotificationPermission()
+        Notifications.scheduleNotificationAsync({
+            content: {
+                title: 'Your reservation',
+                body: `Reservation for day ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}hs requested`,
+            },
+            trigger: null
+        })
+    }
 
     const handleChangePickerGuest = (itemValue, itemIndex) => {
         setGuest(itemValue)
@@ -39,8 +74,13 @@ export const Reservation = () => {
             Date: ${date.toLocaleDateString()} \n
             Time: ${date.toLocaleTimeString()}`,
             [
-                { text: 'Cancel', style: 'cancel'},
-                { text: 'Ok', onPress: () => toggleModal()}
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Ok', onPress: () => {
+                        presentLocalNotification(date),
+                            resetForm()
+                    }
+                }
             ],
             { cancelable: false }
         )

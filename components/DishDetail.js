@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
 
-import { View, Text, ScrollView, FlatList, StyleSheet, Modal, Alert, PanResponder } from 'react-native'
+import { View, Text, ScrollView, FlatList, StyleSheet, Modal, Alert, PanResponder, Share } from 'react-native'
 import { Card, Icon, Rating, Input } from 'react-native-elements'
 
 import * as Animatable from 'react-native-animatable'
@@ -100,6 +100,17 @@ const DishDetail = (props) => {
                 return true
             }
         })
+
+        const sharedDish = (title, message, url) => {
+            Share.share({
+                title: title,
+                message: message,
+                url: url
+            }, {
+                dialogTitle: `Share ${title}`
+            })
+        }
+
         return dish ?
             <Animatable.View animation="fadeInDown" duration={2000} delay={1000} {...panResponder.panHandlers} ref={handleViewRef}>
                 <Card>
@@ -119,10 +130,18 @@ const DishDetail = (props) => {
                         <Icon
                             raised
                             reverse
-                            name={'pencil'}
+                            name='pencil'
                             type='font-awesome'
                             color='#7843A8'
                             onPress={() => setShowModal(true)}
+                        />
+                        <Icon
+                            raised
+                            reverse
+                            name='share'
+                            type='font-awesome'
+                            color='#32A85B'
+                            onPress={() => sharedDish(dish.name, dish.description, imageURL)}
                         />
                     </View>
                 </Card>

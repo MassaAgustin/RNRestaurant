@@ -18,6 +18,7 @@ import About from './About'
 
 import { Reservation } from './Reservation'
 import Favorites from './Favorites'
+import Login from './Login'
 
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators'
 
@@ -45,6 +46,8 @@ const ReservationNav = createStackNavigator()
 
 const FavoriteNav = createStackNavigator()
 
+const LoginNav = createStackNavigator()
+
 const Drawer = createDrawerNavigator()
 
 const CustomDrawerContentComponent = (props) => {
@@ -71,6 +74,19 @@ const CustomDrawerContentComponent = (props) => {
 const MainNavigator = () => {
     return (
         <Drawer.Navigator initialRouteName="Home" drawerContent={(props) => <CustomDrawerContentComponent {...props} />} >
+            <Drawer.Screen name="Login" component={LoginNavigator} options={({ navigation }) => ({
+                drawerIcon: ({ focused }) => (
+                    <Icon
+                        name='sign-in'
+                        type='font-awesome'
+                        size={24}
+                        color={focused ? '#7843A8' : '#000'}
+                    />
+                ),
+                drawerLabel: ({ focused }) => (
+                    <Text style={{ color: focused ? '#7843A8' : '#000' }}>Login</Text>
+                )
+            })} />
             <Drawer.Screen name="Home" component={HomeNavigator} options={({ navigation }) => ({
                 drawerIcon: ({ focused }) => (
                     <Icon
@@ -192,7 +208,7 @@ const MenuNavigator = () => {
         >
             <MenuNav.Screen name="Menu" component={Menu} />
             <MenuNav.Screen name="DishDetail" component={DishDetail} options={({ navigation }) => ({
-                headerLeft: ({}) => (<Icon
+                headerLeft: ({ }) => (<Icon
                     name="arrow-left"
                     type='font-awesome'
                     size={22}
@@ -287,6 +303,27 @@ const FavoritesNavigator = () => {
         >
             <MenuNav.Screen name="Favorites" component={Favorites} />
         </FavoriteNav.Navigator>
+    )
+}
+
+const LoginNavigator = () => {
+
+    return (
+        <LoginNav.Navigator screenOptions={({ navigation }) => ({
+            headerLeft: ({ tintColor }) => (
+                <Icon
+                    name="menu"
+                    size={24}
+                    color='white'
+                    iconStyle={{ marginLeft: 15 }}
+                    onPress={() => navigation.toggleDrawer()}
+                />),
+            headerStyle: { backgroundColor: '#7843A8' },
+            headerTintColor: '#fff'
+        })}
+        >
+            <MenuNav.Screen name="Login" component={Login} />
+        </LoginNav.Navigator>
     )
 }
 
